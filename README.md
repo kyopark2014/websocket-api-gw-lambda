@@ -3,6 +3,8 @@ It is a test app for websocket where api gateway and lambda are used.
 
 ## Reference
 
+[AWS::ApiGatewayV2::Api](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-api.html#cfn-apigatewayv2-api-routeselectionexpression)
+
 [class CfnApi (construct)](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_apigatewayv2.CfnApi.html)
 
 [AWS::ApiGatewayV2 Construct Library](https://github.com/aws/aws-cdk/tree/v2.99.1/packages/aws-cdk-lib/aws-apigatewayv2)
