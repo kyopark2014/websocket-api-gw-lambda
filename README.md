@@ -1,5 +1,104 @@
 # Labmda로 Websocket 활용하기
 
+여기서는 WebSocket을 이용하여 API Gateway - Lambda를 연결합니다. 
+
+## CDK로 인프라 생성하기
+
+```java
+const websocketapi = new apigatewayv2.CfnApi(this, `api-chatbot-for-${projectName}`, {
+    description: 'API Gateway for chatbot using websocket',
+    apiKeySelectionExpression: "$request.header.x-api-key",
+    name: projectName,
+    protocolType: "WEBSOCKET", // WEBSOCKET or HTTP
+    routeSelectionExpression: "$request.body.action",
+});
+websocketapi.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY); // DESTROY, RETAIN
+```
+
+이렇게 해서 생성되는 connection url은 아래와 같습니다.
+
+```java
+const connection_url = `https://${websocketapi.attrApiId}.execute-api.${region}.amazonaws.com/${stage}`;
+```
+
+#### Integration
+
+ROUTE의 "$connect", "$disconnect", "$default"를 위한 Integration은 아래와 같이 선언하여, lambda (chat)과 연결합니다.
+
+```java
+const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdachat.functionArn}/invocations`;
+const cfnIntegration = new apigatewayv2.CfnIntegration(this, `api-integration-for-${projectName}`, {
+    apiId: websocketapi.attrApiId,
+    integrationType: 'AWS_PROXY',
+    credentialsArn: role.roleArn,
+    connectionType: 'INTERNET',
+    description: 'Integration for connect',
+    integrationUri: integrationUri,
+});  
+```
+
+#### Route
+
+API Gateway의 Route는 아래와 같이 정의합니다.
+
+```java
+new apigatewayv2.CfnRoute(this, `api-route-for-${projectName}-connect`, {
+    apiId: websocketapi.attrApiId,
+    routeKey: "$connect",
+    apiKeyRequired: false,
+    authorizationType: "NONE",
+    operationName: 'connect',
+    target: `integrations/${cfnIntegration.ref}`,
+});
+
+new apigatewayv2.CfnRoute(this, `api-route-for-${projectName}-disconnect`, {
+    apiId: websocketapi.attrApiId,
+    routeKey: "$disconnect",
+    apiKeyRequired: false,
+    authorizationType: "NONE",
+    operationName: 'disconnect',
+    target: `integrations/${cfnIntegration.ref}`,
+});
+
+new apigatewayv2.CfnRoute(this, `api-route-for-${projectName}-default`, {
+    apiId: websocketapi.attrApiId,
+    routeKey: "$default",
+    apiKeyRequired: false,
+    authorizationType: "NONE",
+    operationName: 'default',
+    target: `integrations/${cfnIntegration.ref}`,
+});
+```
+
+Stage 생성이 완료되기 전에 Deploy가 되면 배포가 실패될수 있으므로 아래와 같이 멀티 스택으로 정의합니다.
+
+```java
+new componentDeployment(scope, "deployments", websocketapi.attrApiId)       
+
+export class componentDeployment extends cdk.Stack {
+  constructor(scope: Construct, id: string, appId: string, props?: cdk.StackProps) {    
+    super(scope, id, props);
+
+    new apigatewayv2.CfnDeployment(this, `api-deployment-for-${projectName}`, {
+      apiId: appId,
+      description: "deploy api gateway using websocker",  // $default
+      stageName: stage
+    });   
+  }
+}
+```
+
+#### 배포
+
+배포하기 위해서는 Stage를 정의하여야 합니다.
+
+```java
+new apigatewayv2.CfnStage(this, `api-stage-for-${projectName}`, {
+    apiId: websocketapi.attrApiId,
+    stageName: stage
+});
+```
+
 ## 인프라 설치
 
 ```text
