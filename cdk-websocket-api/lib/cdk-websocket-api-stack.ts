@@ -68,6 +68,8 @@ export class CdkWebsocketApiStack extends cdk.Stack {
         connection_url: connection_url
       }      
     });
+    lambdachat.grantInvoke(new iam.ServicePrincipal('apigateway.amazonaws.com'));  
+
     new cdk.CfnOutput(this, 'function-chat-arn', {
       value: lambdachat.functionArn,
       description: 'The arn of lambda chat.',

@@ -1,8 +1,4 @@
 const aws = require('aws-sdk');
-//const aws = require('aws-sdk');
-//import { LambdaActions } from 'lambda-actions';
-//import aws from 'aws-sdk';
-
 
 const connection_url = process.env.connection_url;
 console.log('connection_url: ', connection_url);
