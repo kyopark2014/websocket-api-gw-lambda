@@ -9,13 +9,12 @@ console.log('connection_url: ', connection_url);
 const ENDPOINT = connection_url;
 const client = new aws.ApiGatewayManagementApi({ endpoint: ENDPOINT });
 
-let sesssionId;
-
 const sendMessage = async (id, body) => {
     try {
         await client.postToConnection({
-            'ConnectionId': id,
-            'Data': Buffer.from(JSON.stringify(body)),
+            ConnectionId: id,
+            Data: Buffer.from(JSON.stringify(body)),
+            
         }).promise();
     } catch (err) {
         console.error(err);
@@ -41,21 +40,20 @@ exports.handler = async (event, context) => {
         console.log('routeKey: ', routeKey);
         const body = JSON.parse(event.body || '{}');
         console.log('body: ', body);
+        console.log('msgId: ', body['msgId']);
+        let msgId = body['msgId'];
 
         switch(routeKey) {
             case '$connect':
-                console.log('sesssionId: ', sesssionId);                
                 console.log('new connection!');
-                sesssionId = connectionId;
                 break;
             case '$disconnect':
                 console.log('the session was disconnected!');
                 break;
             case '$default':
-                await sendMessage(sesssionId, {message: `The received message: ${body}`})
-                break;
-            case 'message':
-                await sendMessage(sesssionId, {message: `The received message: ${body}`})
+                await sendMessage(connectionId, {'msgId': msgId, 'msg': `First: Great!`})
+                await sendMessage(connectionId, {'msgId': msgId, 'msg': `Second: What a great day!!`})
+                
                 break;
         }
     } catch (err) {

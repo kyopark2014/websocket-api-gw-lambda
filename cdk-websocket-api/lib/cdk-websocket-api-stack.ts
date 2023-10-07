@@ -49,7 +49,7 @@ export class CdkWebsocketApiStack extends cdk.Stack {
       description: 'The URL of Web Socket',
     });
 
-    const connection_url = `https://${websocketapi.attrApiId}.execute-api.${region}.amazonaws.com/${stage}@connections`;
+    const connection_url = `https://${websocketapi.attrApiId}.execute-api.${region}.amazonaws.com/${stage}`;
     new cdk.CfnOutput(this, 'connection-url', {
       value: connection_url,
       
@@ -114,15 +114,6 @@ export class CdkWebsocketApiStack extends cdk.Stack {
       operationName: 'default',
       target: `integrations/${cfnIntegration.ref}`,      
     }); 
-
-    new apigatewayv2.CfnRoute(this, `api-message-for-${projectName}`, {
-      apiId: websocketapi.attrApiId,
-      routeKey: "message", 
-      apiKeyRequired: false,
-      authorizationType: "NONE",
-      operationName: 'message',
-      target: `integrations/${cfnIntegration.ref}`,      
-    });
 
     new apigatewayv2.CfnStage(this, `api-stage-for-${projectName}`, {
       apiId: websocketapi.attrApiId,
