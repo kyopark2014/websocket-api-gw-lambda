@@ -44,11 +44,12 @@ exports.handler = async (event, context) => {
 
         switch(routeKey) {
             case '$connect':
-                console.log('connected!');
+                console.log('sesssionId: ', sesssionId);                
+                console.log('new connection!');
                 sesssionId = connectionId;
                 break;
             case '$disconnect':
-                console.log('disconnected!');
+                console.log('the session was disconnected!');
                 break;
             case '$default':
                 await sendMessage(sesssionId, {message: `The received message: ${body}`})
