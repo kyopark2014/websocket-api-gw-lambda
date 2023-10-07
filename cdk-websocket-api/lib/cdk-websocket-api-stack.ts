@@ -73,8 +73,8 @@ export class CdkWebsocketApiStack extends cdk.Stack {
         'execute-api:ManageConnections'
       ],
     });        
-    roleLambda.attachInlinePolicy( // add bedrock policy
-      new iam.Policy(this, `bedrock-policy-for-${projectName}`, {
+    roleLambda.attachInlinePolicy( 
+      new iam.Policy(this, `api-invoke-policy-for-${projectName}`, {
         statements: [apiInvokePolicy],
       }),
     );  
