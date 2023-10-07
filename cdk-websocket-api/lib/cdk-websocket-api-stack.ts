@@ -76,7 +76,6 @@ export class CdkWebsocketApiStack extends cdk.Stack {
       value: lambdachat.functionName,
       description: 'The name of lambda chat.',
     });
-
   
     const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdachat.functionArn}/invocations`;    
     const cfnIntegration = new apigatewayv2.CfnIntegration(this, `api-integration-for-${projectName}`, {
@@ -115,12 +114,12 @@ export class CdkWebsocketApiStack extends cdk.Stack {
       target: `integrations/${cfnIntegration.ref}`,      
     }); 
 
-    new apigatewayv2.CfnRoute(this, `api-route-for-${projectName}`, {
+    new apigatewayv2.CfnRoute(this, `api-message-for-${projectName}`, {
       apiId: websocketapi.attrApiId,
-      routeKey: "myrountekey", 
+      routeKey: "message", 
       apiKeyRequired: false,
       authorizationType: "NONE",
-      operationName: 'myroute',
+      operationName: 'message',
       target: `integrations/${cfnIntegration.ref}`,      
     });
 
@@ -130,9 +129,7 @@ export class CdkWebsocketApiStack extends cdk.Stack {
     }); 
 
     // deploy components
-    new componentDeployment(scope, "deployments", websocketapi.attrApiId)   
-
-    
+    new componentDeployment(scope, "deployments", websocketapi.attrApiId)       
   }
 }
 
