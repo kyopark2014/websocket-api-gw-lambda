@@ -109,7 +109,7 @@ const ENDPOINT = connection_url;
 const client = new aws.ApiGatewayManagementApi({ endpoint: ENDPOINT });
 ```
 
-메시지를 받으면 2번 응답을 보내도록 하여 테스트를 하였습니다.
+메시지를 한번 보내려면 여러번 받는 시나리올르 생각하여 아래와 같이 2번 보내도록 처리합니다.
 
 ```java
 await sendMessage(connectionId, {'msgId': msgId, 'msg': `First: Great!`})
@@ -128,12 +128,6 @@ const sendMessage = async (id, body) => {
 };
 ```
 
-편의상 메시지는 
-
-```text
-> {"msgId": "abc1234", "question": "Hello world!"}
->
-```
 
 ## 인프라 설치
 
