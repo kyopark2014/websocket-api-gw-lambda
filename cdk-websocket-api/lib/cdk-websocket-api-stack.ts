@@ -49,8 +49,9 @@ export class CdkWebsocketApiStack extends cdk.Stack {
       description: 'The URL of Web Socket',
     });
 
+    const connection_url = `https://${websocketapi.attrApiId}.execute-api.${region}.amazonaws.com/${stage}@connections`;
     new cdk.CfnOutput(this, 'connection-url', {
-      value: `https://${websocketapi.attrApiId}.execute-api.${region}.amazonaws.com/${stage}@connections`,
+      value: connection_url,
       
       description: 'The URL of connection',
     });
@@ -64,7 +65,7 @@ export class CdkWebsocketApiStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(10),
       logRetention: logs.RetentionDays.ONE_DAY,
       environment: {
-        wss_url: wss_url
+        connection_url: connection_url
       }      
     });
     new cdk.CfnOutput(this, 'function-chat-arn', {

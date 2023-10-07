@@ -4,9 +4,9 @@ const aws = require('aws-sdk');
 //import aws from 'aws-sdk';
 
 
-const wss_url = process.env.wss_url;
-console.log('wss_url: ', wss_url);
-const ENDPOINT = wss_url;
+const connection_url = process.env.connection_url;
+console.log('connection_url: ', connection_url);
+const ENDPOINT = connection_url;
 const client = new aws.ApiGatewayManagementApi({ endpoint: ENDPOINT });
 
 let sesssionId;
