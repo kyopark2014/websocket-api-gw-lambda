@@ -161,7 +161,11 @@ wscat -c wss://z8esbpg0x4.execute-api.ap-northeast-2.amazonaws.com/dev
 
 실제 메시지 전송시 결과는 아래와 같습니다.
 
-
+```text
+> {"msgId": "abc1234", "question": "Hello world!"}
+< {"msgId":"abc1234","msg":"First: Great!"}
+< {"msgId":"abc1234","msg":"Second: What a great day!!"}
+```
 
 ## 인프라 삭제
 
