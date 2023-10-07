@@ -13,28 +13,7 @@ const region = process.env.CDK_DEFAULT_REGION;
 export class CdkWebsocketApiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-
-    // Lambda - Upload
-    const lambdachat = new lambda.Function(this, `lambda-chat-for-${projectName}`, {
-      runtime: lambda.Runtime.NODEJS_16_X, 
-      functionName: functionNmae,
-      code: lambda.Code.fromAsset("../lambda-chat"), 
-      handler: "index.handler", 
-      timeout: cdk.Duration.seconds(10),
-      logRetention: logs.RetentionDays.ONE_DAY,
-      environment: {
-      }      
-    });
-    new cdk.CfnOutput(this, 'function-chat-arn', {
-      value: lambdachat.functionArn,
-      description: 'The arn of lambda chat.',
-    });
     
-    new cdk.CfnOutput(this, 'function-chat-name', {
-      value: lambdachat.functionName,
-      description: 'The name of lambda chat.',
-    });
-
     // role
      const role = new iam.Role(this, `api-role-for-${projectName}`, {
       roleName: `api-role-for-${projectName}`,
@@ -62,6 +41,42 @@ export class CdkWebsocketApiStack extends cdk.Stack {
       value: websocketapi.attrApiId,
       description: 'The API identifier.',
     });
+
+    const wss_url = `wss://${websocketapi.attrApiId}.execute-api.${region}.amazonaws.com/${stage}`;
+    new cdk.CfnOutput(this, 'web-socket-url', {
+      value: wss_url,
+      
+      description: 'The URL of Web Socket',
+    });
+
+    new cdk.CfnOutput(this, 'connection-url', {
+      value: `https://${websocketapi.attrApiId}.execute-api.${region}.amazonaws.com/${stage}@connections`,
+      
+      description: 'The URL of connection',
+    });
+
+    // Lambda - Chat
+    const lambdachat = new lambda.Function(this, `lambda-chat-for-${projectName}`, {
+      runtime: lambda.Runtime.NODEJS_16_X, 
+      functionName: functionNmae,
+      code: lambda.Code.fromAsset("../lambda-chat"), 
+      handler: "index.handler", 
+      timeout: cdk.Duration.seconds(10),
+      logRetention: logs.RetentionDays.ONE_DAY,
+      environment: {
+        wss_url: wss_url
+      }      
+    });
+    new cdk.CfnOutput(this, 'function-chat-arn', {
+      value: lambdachat.functionArn,
+      description: 'The arn of lambda chat.',
+    });
+    
+    new cdk.CfnOutput(this, 'function-chat-name', {
+      value: lambdachat.functionName,
+      description: 'The name of lambda chat.',
+    });
+
   
     const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdachat.functionArn}/invocations`;    
     const cfnIntegration = new apigatewayv2.CfnIntegration(this, `api-integration-for-${projectName}`, {
@@ -117,17 +132,7 @@ export class CdkWebsocketApiStack extends cdk.Stack {
     // deploy components
     new componentDeployment(scope, "deployments", websocketapi.attrApiId)   
 
-    new cdk.CfnOutput(this, 'web-socket-url', {
-      value: `wss://${websocketapi.attrApiId}.execute-api.${region}.amazonaws.com/${stage}`,
-      
-      description: 'The URL of Web Socket',
-    });
-
-    new cdk.CfnOutput(this, 'connection-url', {
-      value: `https://${websocketapi.attrApiId}.execute-api.${region}.amazonaws.com/${stage}@connections`,
-      
-      description: 'The URL of connection',
-    });
+    
   }
 }
 
