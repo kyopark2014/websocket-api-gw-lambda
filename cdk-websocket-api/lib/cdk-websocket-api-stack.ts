@@ -7,7 +7,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 
 const projectName = "websocket-api";
 const stage = "dev";
-const functionNmae = `lambda-chat-for-${projectName}`;
+const functionName = `lambda-chat-for-${projectName}`;
 const region = process.env.CDK_DEFAULT_REGION;   
 
 export class CdkWebsocketApiStack extends cdk.Stack {
@@ -82,7 +82,7 @@ export class CdkWebsocketApiStack extends cdk.Stack {
     // Lambda - Chat
     const lambdachat = new lambda.Function(this, `lambda-chat-for-${projectName}`, {
       runtime: lambda.Runtime.NODEJS_16_X, 
-      functionName: functionNmae,
+      functionName: functionName,
       code: lambda.Code.fromAsset("../lambda-chat"), 
       handler: "index.handler", 
       timeout: cdk.Duration.seconds(10),
