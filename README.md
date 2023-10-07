@@ -99,25 +99,64 @@ new apigatewayv2.CfnStage(this, `api-stage-for-${projectName}`, {
 });
 ```
 
+## Websocket으로 동작하는 Lambda 구현하기
+
+인프라 생성시 만들어지는 API Gateway로 알래와 같이 client를 정의합니다.
+
+```java
+const connection_url = process.env.connection_url;
+const ENDPOINT = connection_url;
+const client = new aws.ApiGatewayManagementApi({ endpoint: ENDPOINT });
+```
+
+메시지를 받으면 2번 응답을 보내도록 하여 테스트를 하였습니다.
+
+```java
+await sendMessage(connectionId, {'msgId': msgId, 'msg': `First: Great!`})
+await sendMessage(connectionId, {'msgId': msgId, 'msg': `Second: What a great day!!`})
+
+const sendMessage = async (id, body) => {
+    try {
+        await client.postToConnection({
+            ConnectionId: id,
+            Data: Buffer.from(JSON.stringify(body)),
+            
+        }).promise();
+    } catch (err) {
+        console.error(err);
+    }
+};
+```
+
+편의상 메시지는 w
+
 ## 인프라 설치
 
 ```text
 cdk deploy --all
 ```
 
-## 시험
+## 시험 방법 및 결과
 
 cdk로 인프라 설치후 결과는 아래와 같습니다.
 
 ![image](https://github.com/kyopark2014/websocket-api-gw-lambda/assets/52392004/0bdf54fe-35a1-416d-823a-139ab6217f21)
 
-여기서, CdkWebsocketApiStack.websocketurl을 이용하여 아래와 같이 접속합니다.
+편의상 메시지 발신은 wascat을 사용합니다. 이를 위해서 아래처럼 client를 설치합니다.
+
+```text
+pip install wascat
+```
+
+이후 아래와 같이 CdkWebsocketApiStack.websocketurl로 접속합니다.
 
 ```text
 wscat -c wss://z8esbpg0x4.execute-api.ap-northeast-2.amazonaws.com/dev
 ```
 
-이를 위해서는 "pip install wascat"로 설치가 필요합니다.
+실제 메시지 전송시 결과는 아래와 같습니다.
+
+
 
 ## 인프라 삭제
 
