@@ -13,6 +13,9 @@ cdk destroy --all
 ```
 
 ## Reference
+
+[How to build a chat using Lambda + WebSocket + API Gateway? (nodejs)](https://www.youtube.com/watch?v=BcWD-M2PJ-8)
+
 [Tutorial: Building a serverless chat app with a WebSocket API, Lambda and DynamoDB](https://docs.aws.amazon.com/apigateway/latest/developerguide/websocket-api-chat-app.html)
 
 [AWS::ApiGatewayV2::RouteResponse](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-routeresponse.html)
