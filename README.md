@@ -1,5 +1,16 @@
-# websocket-api-gw-lambda
-It is a test app for websocket where api gateway and lambda are used.
+# Labmda로 Websocket 활용하기
+
+## 인프라 설치
+
+```text
+cdk deploy --all
+```
+
+## 인프라 삭제
+
+```text
+cdk destroy --all
+```
 
 ## Reference
 [Tutorial: Building a serverless chat app with a WebSocket API, Lambda and DynamoDB](https://docs.aws.amazon.com/apigateway/latest/developerguide/websocket-api-chat-app.html)
