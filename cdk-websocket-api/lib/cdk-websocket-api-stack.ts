@@ -15,7 +15,7 @@ export class CdkWebsocketApiStack extends cdk.Stack {
     super(scope, id, props);
     
     // role
-     const role = new iam.Role(this, `api-role-for-${projectName}`, {
+    const role = new iam.Role(this, `api-role-for-${projectName}`, {
       roleName: `api-role-for-${projectName}`,
       assumedBy: new iam.ServicePrincipal("apigateway.amazonaws.com")
     });
@@ -56,6 +56,29 @@ export class CdkWebsocketApiStack extends cdk.Stack {
       description: 'The URL of connection',
     });
 
+    const roleLambda = new iam.Role(this, `role-lambda-chat-for-${projectName}`, {
+      roleName: `role-lambda-chat-for-${projectName}-${region}`,
+      assumedBy: new iam.CompositePrincipal(
+        new iam.ServicePrincipal("lambda.amazonaws.com")
+      )
+    });
+    roleLambda.addManagedPolicy({
+      managedPolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole',
+    });
+    
+    const apiInvokePolicy = new iam.PolicyStatement({ 
+      resources: ['arn:aws:execute-api:*:*:*'],
+      actions: [
+        'execute-api:Invoke',
+        'execute-api:ManageConnections'
+      ],
+    });        
+    roleLambda.attachInlinePolicy( // add bedrock policy
+      new iam.Policy(this, `bedrock-policy-for-${projectName}`, {
+        statements: [apiInvokePolicy],
+      }),
+    );  
+
     // Lambda - Chat
     const lambdachat = new lambda.Function(this, `lambda-chat-for-${projectName}`, {
       runtime: lambda.Runtime.NODEJS_16_X, 
@@ -64,6 +87,7 @@ export class CdkWebsocketApiStack extends cdk.Stack {
       handler: "index.handler", 
       timeout: cdk.Duration.seconds(10),
       logRetention: logs.RetentionDays.ONE_DAY,
+      role: roleLambda,
       environment: {
         connection_url: connection_url
       }      
