@@ -6,6 +6,20 @@
 cdk deploy --all
 ```
 
+## 시험
+
+cdk로 인프라 설치후 결과는 아래와 같습니다.
+
+![image](https://github.com/kyopark2014/websocket-api-gw-lambda/assets/52392004/0bdf54fe-35a1-416d-823a-139ab6217f21)
+
+여기서, CdkWebsocketApiStack.websocketurl을 이용하여 아래와 같이 접속합니다.
+
+```text
+wscat -c wss://z8esbpg0x4.execute-api.ap-northeast-2.amazonaws.com/dev
+```
+
+이를 위해서는 "pip install wascat"로 설치가 필요합니다.
+
 ## 인프라 삭제
 
 ```text
