@@ -128,7 +128,12 @@ const sendMessage = async (id, body) => {
 };
 ```
 
-편의상 메시지는 w
+편의상 메시지는 
+
+```text
+> {"msgId": "abc1234", "question": "Hello world!"}
+>
+```
 
 ## 인프라 설치
 
