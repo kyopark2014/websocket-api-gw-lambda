@@ -103,6 +103,23 @@ export class CdkWebsocketApiStack extends cdk.Stack {
       value: lambdachat.functionName,
       description: 'The name of lambda chat.',
     });
+
+    /*
+    // Lambda-chat - Python
+    const lambdaChatWebsocket = new lambda.Function(this, `lambda-chat-ws-for-${projectName}`, {
+      description: 'lambda for chat using websocket',
+      functionName: functionName,
+      handler: 'lambda_function.lambda_handler',
+      runtime: lambda.Runtime.PYTHON_3_11,
+      code: lambda.Code.fromAsset(path.join(__dirname, '../../lambda-chat-ws-python')),
+      timeout: cdk.Duration.seconds(120),
+      logRetention: logs.RetentionDays.ONE_DAY,
+      role: roleWebLambda,
+      environment: {
+        connection_url: connection_url
+      }
+    });
+    lambdaChatWebsocket.grantInvoke(new iam.ServicePrincipal('apigateway.amazonaws.com'));  */
   
     const integrationUri = `arn:aws:apigateway:${region}:lambda:path/2015-03-31/functions/${lambdachat.functionArn}/invocations`;    
     const cfnIntegration = new apigatewayv2.CfnIntegration(this, `api-integration-for-${projectName}`, {
