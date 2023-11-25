@@ -1,4 +1,4 @@
-# Labmda로 Websocket 활용하기
+# Lambda로 Websocket 활용하기
 
 여기서는 WebSocket을 이용하여 API Gateway - Lambda를 연결합니다. 
 
